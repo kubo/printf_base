@@ -1,0 +1,5 @@
+*.o
+*~
+/check_output
+/check_output_on_linux
+/check_snprintf
