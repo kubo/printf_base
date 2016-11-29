@@ -1,5 +1,5 @@
 CFLAGS = -Wall -g -I. -Isamples
-TESTS = check_output check_output_on_linux check_snprintf
+TESTS = check_output check_output_on_linux check_dprintf check_snprintf
 VPATH = samples test
 
 all: $(TESTS)
@@ -8,6 +8,9 @@ check_output: check_output.o pfb_asprintf.o printf_base_dbl_wc.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 check_output_on_linux: check_output_on_linux.o pfb_asprintf.o printf_base_dbl_wc.o
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+check_dprintf: check_dprintf.c pfb_dprintf.o printf_base_dbl_wc.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 check_snprintf: check_snprintf.c pfb_snprintf.o printf_base_dbl_wc.o
