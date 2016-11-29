@@ -3,18 +3,18 @@ printf_base - base function to make printf-like functions
 
 This is a base function to make printf-like functions.
 
-Functions compatible with printf, fprintf, dprintf, snprintf, asprintf,
-vprintf, vfprintf, vdprintf, vsnprintf and vasprintf are included in
-the `sample` directory.
+Functions compatible with `printf`, `fprintf`, `dprintf`, `snprintf`, `asprintf`,
+`vprintf`, `vfprintf`, `vdprintf`, `vsnprintf` and `vasprintf` are included in
+the `samples` directory.
 
 The supported format is same with [glibc printf][] except `'` and `I` flags.
 This is compatible with glibc printf as possible as it can. However floating
 point numbers may be slightly differently formatted because of rounding.
 
-If `printf_base.c` is compiled with `-DPFB_NO_EXTERNAL_FUNC`, it doesn't depend
-on any external function, though floating point formats (`%e`, `%E`, `%f, `%F`,
-`%g`, `%G`, `%a` and `%A) and wide character formats (`%ls`, `%S`, `%lc` and `%C`)
-are not supported.
+If `printf_base.c` is compiled with `-DPFB_NO_EXTERNAL_FUNC` compiler option,
+it doesn't depend on any external function, though floating point formats
+(`%e`, `%E`, `%f, `%F`, `%g`, `%G`, `%a` and `%A) and wide character formats
+(`%ls`, `%S`, `%lc` and `%C`) are not supported by the option.
 
 Usage
 -----
@@ -91,7 +91,7 @@ License
 
 2-clause BSD-style license.
 
-Public domain for files in the `sample` directory
+Public domain for files in the `samples` directory
 
 [glibc printf]: http://man7.org/linux/man-pages/man3/fprintf.3.html
 [fputc]: http://man7.org/linux/man-pages/man3/fputc.3.html
