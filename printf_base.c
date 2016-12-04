@@ -40,7 +40,14 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#ifdef WIN32
+#include <malloc.h>
+#ifndef alloca
+#define alloca _alloca
+#endif
+#else
 #include <alloca.h>
+#endif
 #include "printf_base.h"
 
 #ifdef PFB_NO_EXTERNAL_FUNC
@@ -138,19 +145,19 @@ static inline int pfb_strlen(const char *s)
     while (*t) {
         t++;
     }
-    return t - s;
+    return (int)(t - s);
 }
 #define strlen pfb_strlen
 static inline void *pfb_memset(void *s, int c, size_t n)
 {
     /* add volatile to suppress optimization to replace this function with memset by 'gcc -O3'. */
     char * volatile t = (char *)s;
-    char *e = t + n;
-    while (t < e) {
+    while (n-- > 0) {
         *(t++) = c;
     }
     return s;
 }
+#undef memset
 #define memset pfb_memset
 #endif
 
@@ -265,7 +272,7 @@ int printf_base(pfb_putc_t func, void *handle, const char *format, va_list ap)
 {
     const char *fmt;
     int num_param = 0;
-    param_t *params;
+    param_t *params = NULL;
 
     for (fmt = format; *fmt != '\0'; fmt++) {
         if (*fmt == '%') {
@@ -321,7 +328,7 @@ int printf_base_with_buffering(pfb_write_t func, void *handle, const char *forma
 
 static int parse_format(const char *format, param_t *params, size_t num_param)
 {
-    size_t param_idx = 0;
+    int param_idx = 0;
     int va_pos = 1;
 
     while (*format != '\0') {
@@ -481,6 +488,22 @@ static const char *parse_length_modifier(const char *format, param_t *param)
     case 't':
         param->lm = LM_PTRDIFF_T;
         return format + 1;
+#ifdef PFB_MSVC_FORMAT
+    case 'w':
+        param->lm = LM_LONG;
+        return format + 1;
+    case 'I':
+        if (format[1] == '6' && format[2] == '4') {
+            param->lm = LM_LONGLONG;
+            return format + 3;
+        }
+        if (format[1] == '3' && format[2] == '2') {
+            param->lm = LM_INT;
+            return format + 3;
+        }
+        param->lm = LM_SIZE_T;
+        return format + 1;
+#endif
     }
     param->lm = LM_INT;
     return format;
@@ -733,7 +756,7 @@ static int output(pfb_putc_t func, void *handle, const char *format, const param
 {
     const char *last_pos = format;
     int outlen = 0;
-    int i;
+    size_t i;
 
     for (i = 0; i < num_param; i++) {
         const param_t *param = &params[i];
@@ -1212,8 +1235,8 @@ static int output_gdbl(pfb_putc_t func, void *handle, const param_t *param, int 
     } else if (param->blank) {
         sign = ' ';
     }
-    if (dbl != 0) {
-        exp = pfb_floor(pfb_log10(dbl));
+    if (dbl != 0.0) {
+        exp = (int)pfb_floor(pfb_log10(dbl));
         dbl += pfb_pow(10.0, exp - prec + 1) / 2;
         if (dbl >= pfb_pow(10.0, exp + 1)) {
             exp++;
@@ -1380,7 +1403,7 @@ static int output_no_finite_dbl(pfb_putc_t func, void *handle, const param_t *pa
         str = param->upper ? "INF" : "inf";
         slen = 3;
     }
-    padding_len = param->width - slen;
+    padding_len = (int)(param->width - slen);
     if (sign) {
         padding_len--;
     }
@@ -1438,11 +1461,11 @@ static int output_str(pfb_putc_t func, void *handle, const param_t *param, int l
         }
     }
     if (!param->left_adjusted) {
-        PUTC_N(' ', param->width - slen);
+        PUTC_N(' ', (int)(param->width - slen));
     }
     PUTS(str, slen);
     if (param->left_adjusted) {
-        PUTC_N(' ', param->width - slen);
+        PUTC_N(' ', (int)(param->width - slen));
     }
     return outlen;
 }
@@ -1519,11 +1542,11 @@ static int output_wcs(pfb_putc_t func, void *handle, const param_t *param, int l
         }
     }
     if (!param->left_adjusted) {
-        PUTC_N(' ', param->width - slen);
+        PUTC_N(' ', (int)(param->width - slen));
     }
     PUTS(str, slen);
     if (param->left_adjusted) {
-        PUTC_N(' ', param->width - slen);
+        PUTC_N(' ', (int)(param->width - slen));
     }
     if (use_malloc) {
         free(str);
@@ -1549,11 +1572,11 @@ static int output_wch(pfb_putc_t func, void *handle, const param_t *param, int l
         slen = 0;
     }
     if (!param->left_adjusted) {
-        PUTC_N(' ', param->width - slen);
+        PUTC_N(' ', (int)(param->width - slen));
     }
     PUTS(str, slen);
     if (param->left_adjusted) {
-        PUTC_N(' ', param->width - slen);
+        PUTC_N(' ', (int)(param->width - slen));
     }
     return outlen;
 }

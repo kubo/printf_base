@@ -34,6 +34,7 @@ pfb_asprintf.o: pfb_asprintf.c pfb_asprintf.h printf_base.h
 pfb_dprintf.o: pfb_dprintf.c pfb_dprintf.h printf_base.h
 pfb_fprintf.o: pfb_fprintf.c pfb_fprintf.h printf_base.h
 pfb_printf.o: pfb_printf.c pfb_printf.h printf_base.h
+pfb_snprintf.o: pfb_snprintf.c pfb_snprintf.h printf_base.h
 
 check_output_on_linux.o: check_output_on_linux.c pfb_asprintf.h printf_base.h
 check_output.o: check_output.c pfb_asprintf.h printf_base.h

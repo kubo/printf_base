@@ -37,7 +37,7 @@
 #include <stdarg.h>
 
 typedef int (*pfb_putc_t)(char c, void *handle);
-typedef int (*pfb_write_t)(void *handle, void *buf, size_t count);
+typedef int (*pfb_write_t)(void *handle, const void *buf, size_t count);
 
 int printf_base(pfb_putc_t func, void *handle, const char *format, va_list ap);
 
