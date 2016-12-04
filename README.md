@@ -16,6 +16,10 @@ it doesn't depend on any external function, though floating point formats
 (`%e`, `%E`, `%f, `%F`, `%g`, `%G`, `%a` and `%A) and wide character formats
 (`%ls`, `%S`, `%lc` and `%C`) are not supported by the option.
 
+If `printf_base.c` is compiled with `-DPFB_MSVC_FORMAT` compiler option,
+it accepts `w`, `I`, `I64` and `I32` as length modifiers, which are
+used in Microsoft Visual C++.
+
 Usage
 -----
 
